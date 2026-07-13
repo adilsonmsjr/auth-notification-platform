@@ -10,7 +10,7 @@ O objetivo deste projeto é aplicar conceitos utilizados em aplicações moderna
 
 ## Tecnologias
 
-- Java 21
+- Java 17
 - Spring Boot
 - Spring Security
 - JWT (JSON Web Token)
@@ -30,7 +30,7 @@ O objetivo deste projeto é aplicar conceitos utilizados em aplicações moderna
 
 O projeto é composto por **dois microsserviços**.
 
-### Authentication API
+### Authentication API (notification-services)
 
 Responsável por:
 
@@ -41,7 +41,7 @@ Responsável por:
 - Persistência dos dados
 - Atualização do status das notificações
 
-### Notification Worker
+### Notification Worker (send-worker)
 
 Responsável por:
 
@@ -51,7 +51,7 @@ Responsável por:
 
 ---
 
-## 🔄 Fluxo da aplicação
+## Fluxo da aplicação
 
 ```text
 Cliente
@@ -92,7 +92,7 @@ PostgreSQL
 
 ---
 
-## ✅ Funcionalidades
+## Funcionalidades
 
 - Cadastro de usuários
 - Login com JWT
@@ -110,14 +110,14 @@ PostgreSQL
 
 ---
 
-## 📁 Estrutura do projeto
+## Estrutura do projeto
 
 ```text
-auth-notification-platform
+NOTIFICATION-SERVICE
 │
-├── auth-api
+├── notification-services
 │
-├── notification-worker
+├── send-worker
 │
 ├── docker-compose.yml
 │
@@ -126,7 +126,7 @@ auth-notification-platform
 
 ---
 
-## ⚙️ Como executar
+## Como executar
 
 ### 1. Clone o projeto
 
@@ -137,7 +137,7 @@ git clone https://github.com/seu-usuario/auth-notification-platform.git
 ### 2. Acesse o diretório
 
 ```bash
-cd auth-notification-platform
+cd NOTIFICATION-SERVICE
 ```
 
 ### 3. Suba a infraestrutura
@@ -152,26 +152,28 @@ Serão iniciados:
 - RabbitMQ
 - Prometheus
 - Grafana
+- app_producer
+- app_consumer
 
 ### 4. Execute os microsserviços
 
 Na API:
 
 ```bash
-cd auth-api
+cd notification-services
 mvn spring-boot:run
 ```
 
 Em outro terminal:
 
 ```bash
-cd notification-worker
+cd send-worker
 mvn spring-boot:run
 ```
 
 ---
 
-## 📚 Documentação
+## Documentação
 
 Após iniciar a aplicação:
 
@@ -183,7 +185,7 @@ Após iniciar a aplicação:
 
 ---
 
-## 📈 Observabilidade
+## Observabilidade
 
 A aplicação disponibiliza métricas utilizando **Spring Boot Actuator** e **Micrometer**, permitindo o monitoramento através do Prometheus e a criação de dashboards no Grafana.
 
@@ -199,7 +201,7 @@ Métricas monitoradas incluem:
 
 ---
 
-## 🛠️ Próximas melhorias
+## Próximas melhorias
 
 - [ ] Refresh Token
 - [ ] Testes Unitários
@@ -212,7 +214,7 @@ Métricas monitoradas incluem:
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
 Este projeto foi desenvolvido para fins de estudo e aperfeiçoamento em desenvolvimento Backend Java, aplicando conceitos de:
 
@@ -227,8 +229,8 @@ Este projeto foi desenvolvido para fins de estudo e aperfeiçoamento em desenvol
 
 ---
 
-## 👨‍💻 Autor
+##  Autor
 
-**Adilson Messias da Silva Junior**
+**Adilson Junior**
 
 Backend Developer | Java | Spring Boot

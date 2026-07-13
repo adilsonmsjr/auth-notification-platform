@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  banco-postgres:
+    image: postgres:15-alpine # Baixa uma imagem oficial e ultra leve (alpine) do Postgres.
+    container_name: pg_notification # Nome amigável que aparecerá no seu terminal/Docker Desktop.
+    environment: # Variáveis de ambiente que o Postgres exige para criar o banco na primeira vez.
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432" # Redireciona a porta 5432 do seu computador real para a porta 5432 de dentro do container.
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Mapeia a pasta interna do banco na sua máquina (evita perder dados).
+
+  mensageria-rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbit_notification
+    ports:
+      - "5672:5672"       # Porta do Spring se conectar
+      - "15672:15672"     # Painel visual no navegador
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+
+  # --- SEUS MICROSSERVIÇOS ---
+  ms-produtor:
+    build: ./notification-services # Pasta onde está o Dockerfile dele
+    container_name: app_produtor
+    ports:
+      - "8080:8080"
+    depends_on:
+      - banco-postgres
+      - mensageria-rabbitmq
+    environment:
+      POSTGRES_HOST: banco-postgres
+      POSTGRES_PORT: 5432
+
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      RABBIT_HOST: mensageria-rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USER: ${RABBITMQ_USER}
+      RABBIT_PASSWORD: ${RABBITMQ_PASSWORD}
+      
+      JWT_SECRET: ${JWT_SECRET}
+
+  ms-consumidor:
+    build: ./send-worker # Pasta onde está o Dockerfile dele
+    container_name: app_consumidor
+    ports:
+      - "8081:8081" # Porta diferente para não dar conflito com o produtor
+    depends_on:
+      - mensageria-rabbitmq
+    environment:
+      POSTGRES_HOST: banco-postgres
+      POSTGRES_PORT: 5432
+
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      RABBIT_HOST: mensageria-rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USER: ${RABBITMQ_USER}
+      RABBIT_PASSWORD: ${RABBITMQ_PASSWORD}
+
+volumes:
+  pgdata:
